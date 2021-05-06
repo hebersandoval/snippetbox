@@ -7,6 +7,11 @@ import (
 
 // home is a handler function which writes a byte slice as the response body.
 func home(w http.ResponseWriter, r *http.Request) {
+	// Check for an exact URL path match and if no match; send a 404 response to the client.
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
 	w.Write([]byte("Hello from Snippetbox"))
 }
 
