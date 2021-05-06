@@ -9,10 +9,17 @@ import (
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello from Snippetbox"))
 }
+
+// showSnippet displays specific snippets.
+func showSnippet(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Display a specific snippet..."))
+}
+
 func main() {
 	// Initialize a new servemux, then register the home function as the handler for the "/" URL pattern.
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", home)
+	mux.HandleFunc("/snippet", showSnippet)
 
 	// Start a new web server and pass the TCP network address to listen on and the servemux just created.
 	// If http.ListenAndServe() returns an error, an error will be thrown.
