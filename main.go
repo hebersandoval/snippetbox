@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // home is a handler function which writes a byte slice as the response body.
@@ -17,7 +19,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 // showSnippet displays specific snippets.
 func showSnippet(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Display a specific snippet..."))
+	// Extract the value of the id parameter from the query string and convert to an integer; otherwise respond w/ 404.
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w, r)
+		return
+	}
+	// Interpolate the id value with the response and write it to the http.ResponseWriter.
+	fmt.Fprintf(w, "Display a specific snippet with id: %d", id)
 }
 
 // createSnippet displays a form to submit new snippets.
