@@ -63,6 +63,3 @@ func createSnippet(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write([]byte("Create a new snippet..."))
 }
-
-
-// Note: To run server from Windows OS -> go run ./cmd/web/.
