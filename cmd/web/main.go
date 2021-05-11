@@ -1,11 +1,18 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 )
 
 func main() {
+	// Define a new command-line flag, a default value and description. The value will be stored at runtime.
+	addr := flag.String("addr", ":8080", "HTTP network address.")
+
+	// Parse the command-line and read in the flag value and assign it to the "addr" variable. Should be called before using "addr".
+	flag.Parse()
+
 	// Initialize a new servemux, then register the home function as the handler for the "/" URL pattern.
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", home)
@@ -20,8 +27,8 @@ func main() {
 
 	// Start a new web server and pass the TCP network address to listen on and the servemux just created.
 	// If http.ListenAndServe() returns an error, an error will be thrown.
-	log.Println("Starting server on :8080")
-	err := http.ListenAndServe(":8080", mux)
+	log.Printf("Starting server on %s", *addr) // Deference the pointer returned from flag.String()
+	err := http.ListenAndServe(*addr, mux)
 	log.Fatal(err)
 }
 
