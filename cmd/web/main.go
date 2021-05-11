@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -12,6 +13,10 @@ func main() {
 
 	// Parse the command-line and read in the flag value and assign it to the "addr" variable. Should be called before using "addr".
 	flag.Parse()
+
+	// Create a logger for writing information and error messages.
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// Initialize a new servemux, then register the home function as the handler for the "/" URL pattern.
 	mux := http.NewServeMux()
@@ -27,9 +32,9 @@ func main() {
 
 	// Start a new web server and pass the TCP network address to listen on and the servemux just created.
 	// If http.ListenAndServe() returns an error, an error will be thrown.
-	log.Printf("Starting server on %s", *addr) // Deference the pointer returned from flag.String()
+	infoLog.Printf("Starting server on %s", *addr) // Deference the pointer returned from flag.String()
 	err := http.ListenAndServe(*addr, mux)
-	log.Fatal(err)
+	errorLog.Fatal(err)
 }
 
 
