@@ -30,10 +30,17 @@ func main() {
 	// Register the file server as the handler for all URL paths that start with "/static/" and strip the prefix before the request reaches the file server.
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
+	// Initialize a new http.Server struct. Now the server can use the custom errorLog in the event of any problems.
+	srv := &http.Server{
+		Addr: *addr,
+		ErrorLog: errorLog,
+		Handler: mux,
+	}
+
 	// Start a new web server and pass the TCP network address to listen on and the servemux just created.
 	// If http.ListenAndServe() returns an error, an error will be thrown.
 	infoLog.Printf("Starting server on %s", *addr) // Deference the pointer returned from flag.String()
-	err := http.ListenAndServe(*addr, mux)
+	err := srv.ListenAndServe()
 	errorLog.Fatal(err)
 }
 
