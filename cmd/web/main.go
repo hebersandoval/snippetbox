@@ -30,24 +30,11 @@ func main() {
 		infoLog: infoLog,
 	}
 
-	// Initialize a new servemux, then register the home function as the handler for the "/" URL pattern.
-	// Swap the route declarations to use the application struct's methods as the handler functions.
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet", app.showSnippet)
-	mux.HandleFunc("/snippet/create", app.createSnippet)
-
-	// Create a file server which serves files out of the "./ui/static" directory.
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-
-	// Register the file server as the handler for all URL paths that start with "/static/" and strip the prefix before the request reaches the file server.
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
 	// Initialize a new http.Server struct. Now the server can use the custom errorLog in the event of any problems.
 	srv := &http.Server{
 		Addr: *addr,
 		ErrorLog: errorLog,
-		Handler: mux,
+		Handler: app.routes(), // Call the new app.routes() method.
 	}
 
 	// Start a new web server and pass the TCP network address to listen on and the servemux just created.
