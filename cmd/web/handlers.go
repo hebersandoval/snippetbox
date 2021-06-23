@@ -12,7 +12,8 @@ import (
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	// Check for an exact URL path match and if no match; send a 404 response to the client.
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
+		app.notFound(w) // Use the notFound() helper
+		//http.NotFound(w, r)
 		return
 	}
 	// Initialize a slice containing the paths to files. Note: home.page.tmpl file must be *first* in the slice.
@@ -25,15 +26,17 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
 		// Method against application can access its fields.
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err) // Use the serverError() helper.
+		//app.errorLog.Println(err.Error())
+		//http.Error(w, "Internal Server Error", 500)
 		return
 	}
 	// Write the template's content as the response body on the template set and send any dynamic data.
 	err = ts.Execute(w, nil)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", 500)
+		app.serverError(w, err)
+		//app.errorLog.Println(err.Error())
+		//http.Error(w, "Internal Server Error", 500)
 	}
 }
 
@@ -42,7 +45,8 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	// Extract the value of the id parameter from the query string and convert to an integer; otherwise respond w/ 404.
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		app.notFound(w) // Use the notFound() helper.
+		//http.NotFound(w, r)
 		return
 	}
 	// Interpolate the id value with the response and write it to the http.ResponseWriter.
@@ -55,8 +59,9 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		// Add 'Allow: POST' to response header map.
 		w.Header().Set("Allow", "POST")
+		app.clientError(w, http.StatusMethodNotAllowed) // Use the clientError() helper.
 		// Use the http.Error() function that uses w.WriteHeader() and w.Write() under the hood to send a string as the response body.
-		http.Error(w, "Method Not Allowed", 405)
+		//http.Error(w, "Method Not Allowed", 405)
 		return
 	}
 	w.Write([]byte("Create a new snippet..."))
