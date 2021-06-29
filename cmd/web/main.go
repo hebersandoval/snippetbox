@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"github.com/hebersandoval/snippetbox/pkg/models/sqlite3"
 	"log"
 	"net/http"
 	"os"
@@ -14,6 +15,7 @@ import (
 type application struct {
 	errorLog *log.Logger
 	infoLog *log.Logger
+	snippets *sqlite3.SnippetModel
 }
 
 func main() {
@@ -43,6 +45,7 @@ func main() {
 	app := &application{
 		errorLog: errorLog,
 		infoLog: infoLog,
+		snippets: &sqlite3.SnippetModel{DB: db},
 	}
 
 	// Initialize a new http.Server struct. Now the server can use the custom errorLog in the event of any problems.
