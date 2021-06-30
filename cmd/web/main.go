@@ -3,19 +3,19 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"github.com/hebersandoval/snippetbox/pkg/models/sqlite3"
+	"github.com/hebersandoval/snippetbox/pkg/models/mysql"
 	"log"
 	"net/http"
 	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Hold application-wide dependencies for web app.
 type application struct {
 	errorLog *log.Logger
 	infoLog *log.Logger
-	snippets *sqlite3.SnippetModel
+	snippets *mysql.SnippetModel
 }
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	addr := flag.String("addr", ":8080", "HTTP network address.")
 
 	// Define a new command-line flag for the SQLite3 DSN string.
-	dsn := flag.String("dsn", "./snippetbox.db", "SQLite3 data source name")
+	dsn := flag.String("dsn", "web:secret@/snippetbox?parseTime=true", "MySQL data source name")
 
 	// Parse the command-line and read in the flag value and assign it to the "addr" variable. Should be called before using "addr".
 	flag.Parse()
@@ -45,7 +45,7 @@ func main() {
 	app := &application{
 		errorLog: errorLog,
 		infoLog: infoLog,
-		snippets: &sqlite3.SnippetModel{DB: db},
+		snippets: &mysql.SnippetModel{DB: db},
 	}
 
 	// Initialize a new http.Server struct. Now the server can use the custom errorLog in the event of any problems.
@@ -64,7 +64,7 @@ func main() {
 
 // openDB() wraps sql.Open() and returns a sql.DB connection pool for a given a DSN.
 func openDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", dsn)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
 	}
