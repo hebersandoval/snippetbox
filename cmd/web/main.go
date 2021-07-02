@@ -22,17 +22,18 @@ func main() {
 	// Define a new command-line flag, a default value and description. The value will be stored at runtime.
 	addr := flag.String("addr", ":8080", "HTTP network address.")
 
-	// Define a new command-line flag for the SQLite3 DSN string.
+	// Define a new command-line flag for the MySQL DSN string.
 	dsn := flag.String("dsn", "web:secret@/snippetbox?parseTime=true", "MySQL data source name")
 
-	// Parse the command-line and read in the flag value and assign it to the "addr" variable. Should be called before using "addr".
+	// Parse the command-line and read in the flag value and assign it to the "addr" and "dsn" variables.
+	// Should be called before using "addr" and "dsn".
 	flag.Parse()
 
 	// Create a logger for writing information and error messages.
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	// Creating a connection pool into seperate openDB() below, passing the DSN from the command-line flag.
+	// Creating a connection pool into separate openDB() below, passing the DSN from the command-line flag.
 	db, err := openDB(*dsn)
 	if err != nil {
 		errorLog.Fatal(err)
