@@ -1,7 +1,9 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"github.com/hebersandoval/snippetbox/pkg/models"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -43,8 +45,18 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w) // Use the notFound() helper.
 		return
 	}
+	// Use the SnippetModel object's Get Method to retrieve the data for a specific record based on its ID.
+	s, err := app.snippets.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
 	// Interpolate the id value with the response and write it to the http.ResponseWriter.
-	fmt.Fprintf(w, "Display a specific snippet with id: %d", id)
+	fmt.Fprintf(w, "Display a specific snippet with id: %v", s)
 }
 
 // createSnippet displays a form to submit new snippets.
