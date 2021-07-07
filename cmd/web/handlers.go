@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hebersandoval/snippetbox/pkg/models"
-	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -17,6 +16,15 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w) // Use the notFound() helper
 		return
 	}
+	snippets, err := app.snippets.Latest()
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	for _, snippet := range snippets {
+		fmt.Fprintf(w, "%v\n", snippet)
+	}
+	/*
 	// Initialize a slice containing the paths to files. Note: home.page.tmpl file must be *first* in the slice.
 	files := []string{
 		"./ui/html/home.page.tmpl",
@@ -35,6 +43,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.serverError(w, err) // Use the serverError() helper.
 	}
+	 */
 }
 
 // showSnippet displays specific snippets.
