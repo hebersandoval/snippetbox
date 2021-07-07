@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hebersandoval/snippetbox/pkg/models"
+	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -64,8 +65,25 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	// Initialize a slice containing the paths to the show.page.tmpl file, plus the base layout and footer partial.
+	files := []string{
+		"./ui/html/show.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+		"./ui/html/footer.partial.tmpl",
+	}
+	// Parse the template files...
+	ts, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+	// ...and then execute them; pass the snippet data (a model.Snippet struct).
+	err = ts.Execute(w, s)
+	if err != nil {
+		app.serverError(w, err)
+	}
 	// Interpolate the id value with the response and write it to the http.ResponseWriter.
-	fmt.Fprintf(w, "Display a specific snippet with id: %v", s)
+	//fmt.Fprintf(w, "Display a specific snippet with id: %v", s)
 }
 
 // createSnippet displays a form to submit new snippets.
