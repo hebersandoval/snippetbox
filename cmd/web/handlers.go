@@ -56,7 +56,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Use the SnippetModel object's Get Method to retrieve the data for a specific record based on its ID.
-	s, err := app.snippets.Get(id)
+	snippet, err := app.snippets.Get(id)
 	if err != nil {
 		if errors.Is(err, models.ErrNoRecord) {
 			app.notFound(w)
@@ -65,6 +65,8 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	// Create an instance of a templateData struct holding the snippet data.
+	data := &templateData{Snippet: snippet}
 	// Initialize a slice containing the paths to the show.page.tmpl file, plus the base layout and footer partial.
 	files := []string{
 		"./ui/html/show.page.tmpl",
@@ -77,8 +79,8 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	// ...and then execute them; pass the snippet data (a model.Snippet struct).
-	err = ts.Execute(w, s)
+	// ...and then execute them; pass the templateData struct, which contains a model.Snippet field.
+	err = ts.Execute(w, data)
 	if err != nil {
 		app.serverError(w, err)
 	}
