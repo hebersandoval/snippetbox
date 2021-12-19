@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/hebersandoval/snippetbox/pkg/models"
-	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -23,28 +22,35 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create an instance of a templateData struct holding the slice of snippets.
-	data := &templateData{Snippets: snippets}
+	// Use the render helper.
+	app.render(w, r, "home.page.tmpl", &templateData{
+		Snippets: snippets,
+	})
 
-	// Initialize a slice containing the paths to files. Note: home.page.tmpl file must be *first* in the slice.
-	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-	// Read the template files into a template set. If there's an error, log the details.
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		// Method against application can access its fields.
-		app.serverError(w, err) // Use the serverError() helper.
-		return
-	}
-	// Write the template's content as the response body on the template set and send any dynamic data.
-	// Pass in the templateData struct when executing the template.
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err) // Use the serverError() helper.
-	}
+	/*
+		// Create an instance of a templateData struct holding the slice of snippets.
+		data := &templateData{Snippets: snippets}
+
+		// Initialize a slice containing the paths to files. Note: home.page.tmpl file must be *first* in the slice.
+		files := []string{
+			"./ui/html/home.page.tmpl",
+			"./ui/html/base.layout.tmpl",
+			"./ui/html/footer.partial.tmpl",
+		}
+		// Read the template files into a template set. If there's an error, log the details.
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			// Method against application can access its fields.
+			app.serverError(w, err) // Use the serverError() helper.
+			return
+		}
+		// Write the template's content as the response body on the template set and send any dynamic data.
+		// Pass in the templateData struct when executing the template.
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.serverError(w, err) // Use the serverError() helper.
+		}
+	*/
 }
 
 // showSnippet displays specific snippets.
@@ -65,27 +71,35 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	// Create an instance of a templateData struct holding the snippet data.
-	data := &templateData{Snippet: snippet}
-	// Initialize a slice containing the paths to the show.page.tmpl file, plus the base layout and footer partial.
-	files := []string{
-		"./ui/html/show.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
-	}
-	// Parse the template files...
-	ts, err := template.ParseFiles(files...)
-	if err != nil {
-		app.serverError(w, err)
-		return
-	}
-	// ...and then execute them; pass the templateData struct, which contains a model.Snippet field.
-	err = ts.Execute(w, data)
-	if err != nil {
-		app.serverError(w, err)
-	}
-	// Interpolate the id value with the response and write it to the http.ResponseWriter.
-	//fmt.Fprintf(w, "Display a specific snippet with id: %v", s)
+
+	// Use the render helper.
+	app.render(w, r, "show.page.tmpl", &templateData{
+		Snippet: snippet,
+	})
+
+	/*
+		// Create an instance of a templateData struct holding the snippet data.
+		data := &templateData{Snippet: snippet}
+		// Initialize a slice containing the paths to the show.page.tmpl file, plus the base layout and footer partial.
+		files := []string{
+			"./ui/html/show.page.tmpl",
+			"./ui/html/base.layout.tmpl",
+			"./ui/html/footer.partial.tmpl",
+		}
+		// Parse the template files...
+		ts, err := template.ParseFiles(files...)
+		if err != nil {
+			app.serverError(w, err)
+			return
+		}
+		// ...and then execute them; pass the templateData struct, which contains a model.Snippet field.
+		err = ts.Execute(w, data)
+		if err != nil {
+			app.serverError(w, err)
+		}
+		// Interpolate the id value with the response and write it to the http.ResponseWriter.
+		//fmt.Fprintf(w, "Display a specific snippet with id: %v", s)
+	*/
 }
 
 // createSnippet displays a form to submit new snippets.
