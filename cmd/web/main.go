@@ -14,7 +14,7 @@ import (
 // Hold application-wide dependencies for web app.
 type application struct {
 	errorLog *log.Logger
-	infoLog *log.Logger
+	infoLog  *log.Logger
 	snippets *mysql.SnippetModel
 }
 
@@ -45,15 +45,15 @@ func main() {
 	// Initialize a new instance of application containing the dependencies.
 	app := &application{
 		errorLog: errorLog,
-		infoLog: infoLog,
+		infoLog:  infoLog,
 		snippets: &mysql.SnippetModel{DB: db},
 	}
 
 	// Initialize a new http.Server struct. Now the server can use the custom errorLog in the event of any problems.
 	srv := &http.Server{
-		Addr: *addr,
+		Addr:     *addr,
 		ErrorLog: errorLog,
-		Handler: app.routes(), // Call the new app.routes() method.
+		Handler:  app.routes(), // Call the new app.routes() method.
 	}
 
 	// Start a new web server and pass the TCP network address to listen on and the servemux just created.
