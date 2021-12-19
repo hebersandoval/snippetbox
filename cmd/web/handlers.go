@@ -22,10 +22,10 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%v\n", snippet)
-	}
-	/*
+
+	// Create an instance of a templateData struct holding the slice of snippets.
+	data := &templateData{Snippets: snippets}
+
 	// Initialize a slice containing the paths to files. Note: home.page.tmpl file must be *first* in the slice.
 	files := []string{
 		"./ui/html/home.page.tmpl",
@@ -40,11 +40,11 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Write the template's content as the response body on the template set and send any dynamic data.
-	err = ts.Execute(w, nil)
+	// Pass in the templateData struct when executing the template.
+	err = ts.Execute(w, data)
 	if err != nil {
 		app.serverError(w, err) // Use the serverError() helper.
 	}
-	 */
 }
 
 // showSnippet displays specific snippets.
